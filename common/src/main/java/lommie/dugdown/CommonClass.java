@@ -95,8 +95,9 @@ public class CommonClass {
             return;
         }
 
-        int blocksDugDown = ((IMixinPlayer) player).getBlocksDugDown();
-        if (blocksDugDown >= blocksDownTilActivate-1){
+        int blocksDugDown = ((IMixinPlayer) player).getBlocksDugDown()+1;
+        ((IMixinPlayer) player).setBlocksDugDown(blocksDugDown);
+        if (blocksDugDown >= blocksDownTilActivate){
             int eventId = level.random.nextIntBetweenInclusive(0,2);
             Constants.LOG.info("Starting Dig Down Event #{}", eventId);
             switch (eventId){
@@ -121,7 +122,6 @@ public class CommonClass {
                     Constants.LOG.error("Event #{} doesn't exist",eventId);
             }
         }
-        ((IMixinPlayer) player).setBlocksDugDown(blocksDugDown+1);
     }
 
     public static void onWorldTick(Level level){
