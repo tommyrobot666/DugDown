@@ -17,7 +17,7 @@ public class Dugdown implements ModInitializer {
         Constants.LOG.info("Hello Fabric world!");
         CommonClass.init();
 
-        PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> CommonClass.onPlayerDig(pos,world,player));
+        PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> CommonClass.onPlayerDig(pos,world,player,state));
 
         ServerTickEvents.START_WORLD_TICK.register(CommonClass::onWorldTick);
     }

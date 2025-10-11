@@ -6,16 +6,22 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 // This class is part of the common project meaning it is shared between all supported loaders. Code written here can only
@@ -25,6 +31,8 @@ import java.util.UUID;
 public class CommonClass {
     static int blocksDownTilActivate;
     static Map<UUID,Integer> lightningTargets = new HashMap<>();
+    //https://misode.github.io/tags/block/
+    static final TagKey<Block> EVENT_ACTIVATING_BLOCKS = TagKey.create(BuiltInRegistries.BLOCK.key(), Objects.requireNonNull(ResourceLocation.tryBuild(Constants.MOD_ID, "event_activating")));
 
     //Just remember that the method to register more EntityDataSerializer is public;
     //public static final EntityDataSerializer<Custom> BLOCKS_DUG_DOWN = EntityDataSerializer.forValueType(ByteBufCodec for Custom);
@@ -49,9 +57,9 @@ public class CommonClass {
         blocksDownTilActivate = 5;
     }
 
-    public static void onPlayerDig(BlockPos pos, Level level, Player player) {
+    public static void onPlayerDig(BlockPos pos, Level level, Player player, BlockState state) {
         BlockPos playerPos = player.blockPosition();
-        if (!dugDown(pos,playerPos)){
+        if (!dugDown(pos,playerPos) || !state.is(EVENT_ACTIVATING_BLOCKS)){
             ((IMixinPlayer) player).setBlocksDugDown(0);
             return;
         }
@@ -65,7 +73,10 @@ public class CommonClass {
                     BlockPos laveCornerPos = playerPos.below();
                     for (int i = -1; i < 2; i++) {
                         for (int j = -1; j < 2; j++) {
-                            level.setBlockAndUpdate(laveCornerPos.east(i).south(j), Blocks.LAVA.defaultBlockState());
+                            BlockPos lavePos = laveCornerPos.east(i).south(j);
+                            if (level.getBlockState(lavePos).is(EVENT_ACTIVATING_BLOCKS)) {
+                                level.setBlockAndUpdate(lavePos, Blocks.LAVA.defaultBlockState());
+                            }
                         }
                     }
                     return;
