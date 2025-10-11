@@ -61,7 +61,12 @@ public class CommonClass {
             Constants.LOG.info("Starting Dig Down Event #{}", eventId);
             switch (eventId){
                 case 0:
-                    level.setBlockAndUpdate(playerPos.below(), Blocks.LAVA.defaultBlockState());
+                    BlockPos laveCornerPos = playerPos.below();
+                    for (int i = -1; i < 2; i++) {
+                        for (int j = -1; j < 2; j++) {
+                            level.setBlockAndUpdate(laveCornerPos.east(i).south(j), Blocks.LAVA.defaultBlockState());
+                        }
+                    }
                     return;
                 case 1:
                     lightningTargets.put(player.getUUID(),100);
