@@ -1,19 +1,17 @@
 package lommie.dugdown;
 
-import lommie.dugdown.mixin.IMixinPlayer;
+import lommie.dugdown.notamixin.IMixinPlayer;
 import lommie.dugdown.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.material.LavaFluid;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -85,11 +83,18 @@ public class CommonClass {
 
         for (UUID uuid : lightningTargets.keySet()) {
             Player player = level.getPlayerByUUID(uuid);
+            int timesLeft = lightningTargets.get(uuid)-1;
             if (player == null){
                 continue;
             }
 
             EntityType.LIGHTNING_BOLT.spawn(serverLevel, player.blockPosition(), MobSpawnType.COMMAND);
+
+            if (timesLeft>0) {
+                lightningTargets.put(uuid, timesLeft);
+            } else {
+                lightningTargets.remove(uuid);
+            }
         }
     }
 

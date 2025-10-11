@@ -1,4 +1,4 @@
-package lommie.dugdown.mixin;
+package lommie.dugdown.notamixin;
 
 public interface IMixinPlayer {
     int getBlocksDugDown();

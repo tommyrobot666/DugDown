@@ -1,5 +1,6 @@
 package lommie.dugdown.mixin;
 
+import lommie.dugdown.notamixin.IMixinPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -15,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.lang.reflect.Field;
 
 @Mixin(Player.class)
-public class MixinPlayer implements IMixinPlayer{
+public class MixinPlayer implements IMixinPlayer {
     @Unique
     private static final EntityDataAccessor<Integer> DATA_BLOCKS_DUG_DOWN = SynchedEntityData.defineId(Player.class, EntityDataSerializers.INT);
 
