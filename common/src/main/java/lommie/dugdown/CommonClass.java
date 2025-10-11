@@ -62,12 +62,14 @@ public class CommonClass {
         configFile = Services.PLATFORM.getConfigDirectory().resolve("dugdown.txt");
         try {
             blocksDownTilActivate = loadConfig();
-        } catch (IOException e) {
+        } catch (IOException | NumberFormatException e ) {
             blocksDownTilActivate = defaultBlocksDownTilActivate;
             Constants.LOG.error("Couldn't load config");
             Constants.LOG.error("Using default values");
             Constants.LOG.error(e.getMessage());
-            Constants.LOG.error(Arrays.toString(e.getStackTrace()));
+            for (StackTraceElement element : e.getStackTrace()){
+                Constants.LOG.error(element.toString());
+            }
         }
     }
 
