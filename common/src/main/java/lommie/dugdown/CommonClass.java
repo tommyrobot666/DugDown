@@ -2,6 +2,7 @@ package lommie.dugdown;
 
 import lommie.dugdown.notamixin.IMixinPlayer;
 import lommie.dugdown.platform.Services;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -72,7 +73,7 @@ public class CommonClass {
                     lightningTargets.put(player.getUUID(),100);
                     return;
                 case 2:
-                    player.sendSystemMessage(Component.literal("Watch out! You might fall in lava!"));
+                    player.sendSystemMessage(Component.literal("Watch out! You might fall in lava!").withStyle(ChatFormatting.RED));
                     return;
                 default:
                     Constants.LOG.error("Event #{} doesn't exist",eventId);
