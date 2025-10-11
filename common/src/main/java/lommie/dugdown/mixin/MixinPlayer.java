@@ -54,11 +54,24 @@ public class MixinPlayer implements IMixinPlayer {
         SynchedEntityData entityData;
         try {
             entityDataField = Entity.class.getDeclaredField("entityData");
-            entityDataField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            try {
+                // https://wagyourtail.xyz/Projects/MinecraftMappingViewer/App
+                // https://wagyourtail.xyz/Projects/MinecraftMappingViewer/App?version=1.21&mapping=MOJMAP,INTERMEDIARY&search=net/minecraft/world/entity/Entity
+                // https://github.com/wagyourtail/wagyourtail.xyz/tree/master/views/sections/Projects/MinecraftMappingViewer/App
+                entityDataField = Entity.class.getDeclaredField("field_6011");
+            } catch (NoSuchFieldException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        entityDataField.setAccessible(true);
+        try {
+
             entityData = (SynchedEntityData) entityDataField.get(this);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+
         return entityData;
     }
 }
