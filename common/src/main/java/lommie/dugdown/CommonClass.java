@@ -120,9 +120,8 @@ public class CommonClass {
                 default:
                     Constants.LOG.error("Event #{} doesn't exist",eventId);
             }
-        } else {
-            ((IMixinPlayer) player).setBlocksDugDown(blocksDugDown+1);
         }
+        ((IMixinPlayer) player).setBlocksDugDown(blocksDugDown+1);
     }
 
     public static void onWorldTick(Level level){
