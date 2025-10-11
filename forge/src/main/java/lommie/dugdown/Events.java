@@ -9,12 +9,12 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber
 public class Events {
     @SubscribeEvent
-    public void onBlockBreak(BlockEvent.BreakEvent event){
+    public static void onBlockBreak(BlockEvent.BreakEvent event){
         CommonClass.onPlayerDig(event.getPos(), (Level) event.getLevel(),event.getPlayer(),event.getState());
     }
 
     @SubscribeEvent
-    public void onLevelTick(TickEvent.LevelTickEvent event){
+    public static void onLevelTick(TickEvent.LevelTickEvent event){
         CommonClass.onWorldTick(event.level);
     }
 }
