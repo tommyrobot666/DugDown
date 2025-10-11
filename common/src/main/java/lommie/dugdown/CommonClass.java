@@ -19,10 +19,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.*;
 
 // This class is part of the common project meaning it is shared between all supported loaders. Code written here can only
 // import and access the vanilla codebase, libraries used by vanilla, and optionally third party libraries that provide
@@ -30,6 +32,9 @@ import java.util.UUID;
 // however it will be compatible with all supported mod loaders.
 public class CommonClass {
     static int blocksDownTilActivate;
+    static final int defaultBlocksDownTilActivate = 5;
+    static final String defaultConfigFile = "How many blocks can the player dig down without consequences?\nblocksDownTilActivate: 5";
+    static Path configFile;
     static Map<UUID,Integer> lightningTargets = new HashMap<>();
     //https://misode.github.io/tags/block/
     static final TagKey<Block> EVENT_ACTIVATING_BLOCKS = TagKey.create(BuiltInRegistries.BLOCK.key(), Objects.requireNonNull(ResourceLocation.tryBuild(Constants.MOD_ID, "event_activating")));
@@ -54,7 +59,33 @@ public class CommonClass {
         }
 
         //read config
-        blocksDownTilActivate = 5;
+        configFile = Services.PLATFORM.getConfigDirectory().resolve("dugdown.txt");
+        try {
+            blocksDownTilActivate = loadConfig();
+        } catch (IOException e) {
+            blocksDownTilActivate = defaultBlocksDownTilActivate;
+            Constants.LOG.error("Couldn't load config");
+            Constants.LOG.error("Using default values");
+            Constants.LOG.error(e.getMessage());
+            Constants.LOG.error(Arrays.toString(e.getStackTrace()));
+        }
+    }
+
+    static int loadConfig() throws IOException, NumberFormatException {
+        if (Files.exists(configFile)){
+            Constants.LOG.info("Config found... reading file");
+            for (String line : Files.readAllLines(configFile)){
+                if (line.startsWith("blocksDownTilActivate:")){
+                    return Integer.parseInt(line.substring(22).strip());
+                }
+            }
+            Constants.LOG.error("No lines in config started with 'blocksDownTilActivate:'");
+            Constants.LOG.error("Add a new line with blocksDownTilActivate:<positiveNumber> to fix this");
+        } else {
+            Constants.LOG.info("No config found... creating file");
+            Files.writeString(configFile,defaultConfigFile, StandardOpenOption.CREATE);
+        }
+        return defaultBlocksDownTilActivate;
     }
 
     public static void onPlayerDig(BlockPos pos, Level level, Player player, BlockState state) {
