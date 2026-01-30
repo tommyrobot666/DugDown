@@ -4,8 +4,11 @@ import lommie.dugdown.notamixin.IMixinPlayer;
 import lommie.dugdown.platform.Services;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -25,6 +28,7 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.function.Function;
 
 // This class is part of the common project meaning it is shared between all supported loaders. Code written here can only
 // import and access the vanilla codebase, libraries used by vanilla, and optionally third party libraries that provide
@@ -38,6 +42,8 @@ public class CommonClass {
     static Map<UUID,Integer> lightningTargets = new HashMap<>();
     //https://misode.github.io/tags/block/
     static final TagKey<Block> EVENT_ACTIVATING_BLOCKS = TagKey.create(BuiltInRegistries.BLOCK.key(), Objects.requireNonNull(ResourceLocation.tryBuild(Constants.MOD_ID, "event_activating")));
+    public static ResourceKey<Registry<DigDownEvent>> DIG_DOWN_EVENT_REGISTRY_KEY = ResourceKey.createRegistryKey(Objects.requireNonNull(ResourceLocation.tryBuild("modid", "path")));
+    public static MappedRegistry<DigDownEvent> DIG_DOWN_EVENT_REGISTRY;
 
     //Just remember that the method to register more EntityDataSerializer is public;
     //public static final EntityDataSerializer<Custom> BLOCKS_DUG_DOWN = EntityDataSerializer.forValueType(ByteBufCodec for Custom);
@@ -140,6 +146,10 @@ public class CommonClass {
                 lightningTargets.remove(uuid);
             }
         }
+    }
+
+    public static void onDeathOrRespawn(Player player){
+        lightningTargets.remove(player.getUUID());
     }
 
     static boolean dugDown(BlockPos pos, BlockPos playerPos){
