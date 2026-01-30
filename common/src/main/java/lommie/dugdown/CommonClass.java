@@ -72,6 +72,8 @@ public class CommonClass {
                 Constants.LOG.error(element.toString());
             }
         }
+
+        ModDigDownEvents.register();
     }
 
     static int loadConfig() throws IOException, NumberFormatException {
