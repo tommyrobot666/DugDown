@@ -47,7 +47,7 @@ public class CommonClass {
     // write the majority of your code here and load it from your loader specific projects. This example has some
     // code that gets invoked by the entry point of the loader specific projects.
     public static void init() {
-        Constants.LOG.info("'{}' is placing lava under you in a {} environment!", Services.PLATFORM.getPlatformName(), Services.PLATFORM.getEnvironmentName());
+        Constants.LOG.info("dugdown on modloader '{}' is placing lava under you in a {} environment!", Services.PLATFORM.getPlatformName(), Services.PLATFORM.getEnvironmentName());
 
         // It is common for all supported loaders to provide a similar feature that can not be used directly in the
         // common code. A popular way to get around this is using Java's built-in service loader feature to create
@@ -100,7 +100,7 @@ public class CommonClass {
         ((IMixinPlayer) player).dugDown$setBlocksDugDown(blocksDugDown);
         if (blocksDugDown >= blocksDownTilActivate){
             int eventId = level.random.nextIntBetweenInclusive(0,DIG_DOWN_EVENT_REGISTRY.size()-1);
-            Constants.LOG.info("Starting Dig Down Event #{}", eventId);
+            Constants.LOG.debug("Starting Dig Down Event #{}, id:{}", eventId, List.copyOf(DIG_DOWN_EVENT_REGISTRY.keySet()).get(eventId).toString());
             Objects.requireNonNull(DIG_DOWN_EVENT_REGISTRY.byId(eventId)).event(pos, level, player, state);
         }
     }
