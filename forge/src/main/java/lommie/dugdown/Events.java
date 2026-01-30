@@ -17,4 +17,8 @@ public class Events {
     public static void onLevelTick(TickEvent.LevelTickEvent event){
         CommonClass.onWorldTick(event.level);
     }
+//
+//    public static void onNewRegistryEvent(NewRegistryEvent event){
+//        CommonClass.DIG_DOWN_EVENT_REGISTRY = event.create(RegistryBuilder.of(CommonClass.DIG_DOWN_EVENT_REGISTRY_KEY.location())).get();
+//    }
 }
