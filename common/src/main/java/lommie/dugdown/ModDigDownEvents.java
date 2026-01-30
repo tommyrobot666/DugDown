@@ -31,7 +31,7 @@ public class ModDigDownEvents {
     }
 
     static void LightningDoomEvent(BlockPos pos, Level level, Player player, BlockState state) {
-        CommonClass.lightningTargets.put(player.getUUID(),100);
+        CommonClass.lightningTargets.put(player.getUUID(),50);
     }
 
     static void PlaceLaveEvent(BlockPos pos, Level level, Player player, BlockState state) {

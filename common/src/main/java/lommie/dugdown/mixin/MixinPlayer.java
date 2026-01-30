@@ -24,13 +24,13 @@ public class MixinPlayer implements IMixinPlayer {
 
     @Inject(method = "addAdditionalSaveData", at=@At("TAIL"))
     public void addAdditionalSaveData(CompoundTag pCompound, CallbackInfo ci) {
-        SynchedEntityData entityData = getSynchedEntityDataWithReflection();
+        SynchedEntityData entityData = dugDown$getSynchedEntityDataWithReflection();
         pCompound.putInt("blocksDugDown", entityData.get(DATA_BLOCKS_DUG_DOWN));
     }
 
     @Inject(method = "readAdditionalSaveData", at=@At("TAIL"))
     public void readAdditionalSaveData(CompoundTag pCompound, CallbackInfo ci){
-        SynchedEntityData entityData = getSynchedEntityDataWithReflection();
+        SynchedEntityData entityData = dugDown$getSynchedEntityDataWithReflection();
         entityData.set(DATA_BLOCKS_DUG_DOWN, pCompound.getInt("blocksDugDown"));
     }
 
@@ -40,18 +40,19 @@ public class MixinPlayer implements IMixinPlayer {
     }
 
     @Unique
-     public int getBlocksDugDown(){
-        SynchedEntityData entityData = getSynchedEntityDataWithReflection();
+     public int dugDown$getBlocksDugDown(){
+        SynchedEntityData entityData = dugDown$getSynchedEntityDataWithReflection();
         return entityData.get(DATA_BLOCKS_DUG_DOWN);
     }
 
     @Unique
-    public void setBlocksDugDown(int val){
-        SynchedEntityData entityData = getSynchedEntityDataWithReflection();
+    public void dugDown$setBlocksDugDown(int val){
+        SynchedEntityData entityData = dugDown$getSynchedEntityDataWithReflection();
         entityData.set(DATA_BLOCKS_DUG_DOWN,val);
     }
 
-    SynchedEntityData getSynchedEntityDataWithReflection(){
+    @Unique
+    SynchedEntityData dugDown$getSynchedEntityDataWithReflection(){
         Field entityDataField;
         SynchedEntityData entityData;
         try {
@@ -61,6 +62,7 @@ public class MixinPlayer implements IMixinPlayer {
                 // https://wagyourtail.xyz/Projects/MinecraftMappingViewer/App
                 // https://wagyourtail.xyz/Projects/MinecraftMappingViewer/App?version=1.21&mapping=MOJMAP,INTERMEDIARY&search=net/minecraft/world/entity/Entity
                 // https://github.com/wagyourtail/wagyourtail.xyz/tree/master/views/sections/Projects/MinecraftMappingViewer/App
+                //noinspection JavaReflectionMemberAccess
                 entityDataField = Entity.class.getDeclaredField("field_6011");
             } catch (NoSuchFieldException ex) {
                 throw new RuntimeException(ex);

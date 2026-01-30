@@ -2,21 +2,17 @@ package lommie.dugdown;
 
 import lommie.dugdown.notamixin.IMixinPlayer;
 import lommie.dugdown.platform.Services;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -24,11 +20,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
-import java.util.function.Function;
 
 // This class is part of the common project meaning it is shared between all supported loaders. Code written here can only
 // import and access the vanilla codebase, libraries used by vanilla, and optionally third party libraries that provide
@@ -40,7 +34,7 @@ public class CommonClass {
     static final int defaultBlocksDownTilActivate = 5;
     static final String defaultConfigFile = "How many blocks can the player dig down without consequences?\nblocksDownTilActivate: 5";
     static Path configFile;
-    static Map<UUID,Integer> lightningTargets = new HashMap<>();
+    static final Map<UUID,Integer> lightningTargets = new HashMap<>();
     //https://misode.github.io/tags/block/
     static final TagKey<Block> EVENT_ACTIVATING_BLOCKS = TagKey.create(BuiltInRegistries.BLOCK.key(), Objects.requireNonNull(ResourceLocation.tryBuild(Constants.MOD_ID, "event_activating")));
     public static final ResourceKey<Registry<DigDownEvent>> DIG_DOWN_EVENT_REGISTRY_KEY = ResourceKey.createRegistryKey(Objects.requireNonNull(ResourceLocation.tryBuild(MOD_ID, "dig_down_events")));
@@ -96,13 +90,14 @@ public class CommonClass {
 
     public static void onPlayerDig(BlockPos pos, Level level, Player player, BlockState state) {
         BlockPos playerPos = player.blockPosition();
+        if (pos == playerPos && state.is(Blocks.FIRE)) return; // Player might accidentally break fire during lightning event
         if (!dugDown(pos,playerPos) || !state.is(EVENT_ACTIVATING_BLOCKS)){
-            ((IMixinPlayer) player).setBlocksDugDown(0);
+            ((IMixinPlayer) player).dugDown$setBlocksDugDown(0);
             return;
         }
 
-        int blocksDugDown = ((IMixinPlayer) player).getBlocksDugDown()+1;
-        ((IMixinPlayer) player).setBlocksDugDown(blocksDugDown);
+        int blocksDugDown = ((IMixinPlayer) player).dugDown$getBlocksDugDown()+1;
+        ((IMixinPlayer) player).dugDown$setBlocksDugDown(blocksDugDown);
         if (blocksDugDown >= blocksDownTilActivate){
             int eventId = level.random.nextIntBetweenInclusive(0,DIG_DOWN_EVENT_REGISTRY.size()-1);
             Constants.LOG.info("Starting Dig Down Event #{}", eventId);

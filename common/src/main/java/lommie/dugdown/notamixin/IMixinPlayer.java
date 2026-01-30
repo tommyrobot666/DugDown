@@ -1,6 +1,6 @@
 package lommie.dugdown.notamixin;
 
 public interface IMixinPlayer {
-    int getBlocksDugDown();
-    void setBlocksDugDown(int val);
+    int dugDown$getBlocksDugDown();
+    void dugDown$setBlocksDugDown(int val);
 }

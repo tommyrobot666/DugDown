@@ -3,7 +3,6 @@ package lommie.dugdown.platform;
 import lommie.dugdown.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
 
-import java.io.File;
 import java.nio.file.Path;
 
 public class FabricPlatformHelper implements IPlatformHelper {
