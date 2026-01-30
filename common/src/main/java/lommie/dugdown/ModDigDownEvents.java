@@ -15,12 +15,12 @@ import java.util.Objects;
 
 public class ModDigDownEvents {
     static void register(DigDownEvent event, String name){
-        CommonClass.DIG_DOWN_EVENT_REGISTRY.register(ResourceKey.create(CommonClass.DIG_DOWN_EVENT_REGISTRY_KEY, Objects.requireNonNull(ResourceLocation.tryBuild("modid", name))),event, RegistrationInfo.BUILT_IN);
+        CommonClass.DIG_DOWN_EVENT_REGISTRY.register(ResourceKey.create(CommonClass.DIG_DOWN_EVENT_REGISTRY_KEY, Objects.requireNonNull(ResourceLocation.tryBuild(CommonClass.MOD_ID, name))),event, RegistrationInfo.BUILT_IN);
     }
 
     static void register(){
         register(ModDigDownEvents::PlaceLaveEvent,"place_lava");
-        register(ModDigDownEvents::LightningDoomEvent,"lighntinng_doom");
+        register(ModDigDownEvents::LightningDoomEvent,"lighting_doom");
         register(ModDigDownEvents::WarningMessageEvent,"warning_message");
     }
 

@@ -35,6 +35,7 @@ import java.util.function.Function;
 // common compatible binaries. This means common code can not directly use loader specific concepts such as Forge events
 // however it will be compatible with all supported mod loaders.
 public class CommonClass {
+    public static final String MOD_ID = "dugdown";
     static int blocksDownTilActivate;
     static final int defaultBlocksDownTilActivate = 5;
     static final String defaultConfigFile = "How many blocks can the player dig down without consequences?\nblocksDownTilActivate: 5";
@@ -42,7 +43,7 @@ public class CommonClass {
     static Map<UUID,Integer> lightningTargets = new HashMap<>();
     //https://misode.github.io/tags/block/
     static final TagKey<Block> EVENT_ACTIVATING_BLOCKS = TagKey.create(BuiltInRegistries.BLOCK.key(), Objects.requireNonNull(ResourceLocation.tryBuild(Constants.MOD_ID, "event_activating")));
-    public static ResourceKey<Registry<DigDownEvent>> DIG_DOWN_EVENT_REGISTRY_KEY = ResourceKey.createRegistryKey(Objects.requireNonNull(ResourceLocation.tryBuild("modid", "path")));
+    public static final ResourceKey<Registry<DigDownEvent>> DIG_DOWN_EVENT_REGISTRY_KEY = ResourceKey.createRegistryKey(Objects.requireNonNull(ResourceLocation.tryBuild(MOD_ID, "dig_down_events")));
     public static MappedRegistry<DigDownEvent> DIG_DOWN_EVENT_REGISTRY;
 
     //Just remember that the method to register more EntityDataSerializer is public;
@@ -103,29 +104,9 @@ public class CommonClass {
         int blocksDugDown = ((IMixinPlayer) player).getBlocksDugDown()+1;
         ((IMixinPlayer) player).setBlocksDugDown(blocksDugDown);
         if (blocksDugDown >= blocksDownTilActivate){
-            int eventId = level.random.nextIntBetweenInclusive(0,2);
+            int eventId = level.random.nextIntBetweenInclusive(0,DIG_DOWN_EVENT_REGISTRY.size()-1);
             Constants.LOG.info("Starting Dig Down Event #{}", eventId);
-            switch (eventId){
-                case 0:
-                    BlockPos laveCornerPos = playerPos.below();
-                    for (int i = -1; i < 2; i++) {
-                        for (int j = -1; j < 2; j++) {
-                            BlockPos lavePos = laveCornerPos.east(i).south(j);
-                            if (level.getBlockState(lavePos).is(EVENT_ACTIVATING_BLOCKS)) {
-                                level.setBlockAndUpdate(lavePos, Blocks.LAVA.defaultBlockState());
-                            }
-                        }
-                    }
-                    return;
-                case 1:
-                    lightningTargets.put(player.getUUID(),100);
-                    return;
-                case 2:
-                    player.sendSystemMessage(Component.literal("Watch out! You might fall in lava!").withStyle(ChatFormatting.RED));
-                    return;
-                default:
-                    Constants.LOG.error("Event #{} doesn't exist",eventId);
-            }
+            Objects.requireNonNull(DIG_DOWN_EVENT_REGISTRY.byId(eventId)).event(pos, level, player, state);
         }
     }
 
